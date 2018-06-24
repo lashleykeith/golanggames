@@ -10,12 +10,14 @@ package main
 // Handling resizing of the window
 // load bitmaps for our paddles/ball
 
+
+
 import (
 	"fmt"
 	"math"
 	"time"
-
-	"github.com/jackmott/noise"
+	"github.com/lashleykeith/golanggames/app/noise"
+	//"github.com/jackmott/noise"
 	"github.com/veandco/go-sdl2/sdl"
 )
 

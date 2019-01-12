@@ -35,7 +35,7 @@ func (op *OpSin) Eval(x, y float32) float32 {
 }
 
 func (op *OpSin) String() string {
-	return "Sin(" + op.Child.String() + ")"
+	return "( Sin " + op.Child.String() + ")"
 }
 
 type OpPlus struct {
@@ -47,7 +47,7 @@ func (op *OpPlus) Eval(x, y float32) float32 {
 }
 
 func (op *OpPlus) String() string {
-	return op.LeftChild.String() + " + " + op.RightChild.String()
+	return "( + " + op.LeftChild.String() + " " + op.RightChild.String() + ")"
 }
 
 type OpX LeafNode

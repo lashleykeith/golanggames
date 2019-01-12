@@ -1,7 +1,6 @@
 package apt
 
 import (
-	"fmt"
 	"math"
 	//. "github.com/jackmott/gameswithgo-public/evolvingpictures/apt"
 )
@@ -39,9 +38,6 @@ func (op *OpSin) Eval(x, y float32) float32 {
 }
 
 func (op *OpPlus) Eval(x, y float32) float32 {
-	fmt.Println(x, y)
-	fmt.Println(op.LeftChild.Eval(x, y))
-	fmt.Println(op.RightChild.Eval(x, y))
 	return op.LeftChild.Eval(x, y) + op.RightChild.Eval(x, y)
 }
 
@@ -59,4 +55,3 @@ func (op *OpY) Eval(x, y float32) float32 {
 
 // EP 43:39
 // https://github.com/veandco/go-sdl2/
-//

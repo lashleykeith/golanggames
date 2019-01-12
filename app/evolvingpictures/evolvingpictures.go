@@ -7,6 +7,22 @@ import (
 	//. "github.com/jackmott/gameswithgo-public/evolvingpictures/apt"
 )
 
+func main() {
+	x := &OpX{}
+	y := &OpY{}
+	plus := &OpPlus{}
+	sine := &OpSin{}
+	sine.Child = x
+	plus.LeftChild = sine
+	plus.RightChild = y
+
+	fmt.Println(plus.Eval(5, 2))
+
+}
+
+//42:00
+
+/// 1 apt
 /*
 type Node interface {
 	Eval(x, y float32) float32
@@ -46,17 +62,3 @@ func (op *OpY) Eval(x, y float32) float32 {
 	return y
 }
 */
-/////////////////////////////////////////////
-
-func main() {
-	x := &OpX{}
-	y := &OpY{}
-	plus := &OpPlus{}
-	plus.LeftChild = x
-	plus.RightChild = y
-
-	fmt.Println(plus.Eval(5, 2))
-
-}
-
-//42:00

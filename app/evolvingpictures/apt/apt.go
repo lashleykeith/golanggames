@@ -2,8 +2,14 @@ package apt
 
 import (
 	"fmt"
+	"math"
 	//. "github.com/jackmott/gameswithgo-public/evolvingpictures/apt"
 )
+
+// + / * - Sin Cos Atan SimplexNoise X Y Constants...
+// Leaf Node (0 children)
+// Single Node (sin/cos)
+// DoubleNode (+, -)
 
 type Node interface {
 	Eval(x, y float32) float32
@@ -20,8 +26,16 @@ type DoubleNode struct {
 	RightChild Node
 }
 
+type OpSin struct {
+	SingleNode
+}
+
 type OpPlus struct {
 	DoubleNode
+}
+
+func (op *OpSin) Eval(x, y float32) float32 {
+	return float32(math.Sin(float64(op.Child.Eval(x, y))))
 }
 
 func (op *OpPlus) Eval(x, y float32) float32 {
@@ -43,5 +57,5 @@ func (op *OpY) Eval(x, y float32) float32 {
 	return y
 }
 
-// EP 33:00
+// EP 43:39
 // https://github.com/veandco/go-sdl2/

@@ -1,5 +1,5 @@
 //Starting soon!
-
+/*
 package apt
 
 import (
@@ -224,3 +224,4 @@ func (l *lexer) peek() (r rune) {
 	r, _ = utf8.DecodeRuneInString(l.input[l.pos:])
 	return r
 }
+*/

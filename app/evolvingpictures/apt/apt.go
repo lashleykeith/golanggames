@@ -1,7 +1,8 @@
 package apt
 
 import (
-	"github.com/jackmott/noise"
+	"github.com/lashleykeith/golanggames/noise"
+	//"github.com/jackmott/noise"
 	"math"
 	"strconv"
 	//. "github.com/jackmott/gameswithgo-public/evolvingpictures/apt"

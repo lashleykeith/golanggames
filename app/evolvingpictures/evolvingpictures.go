@@ -194,7 +194,7 @@ func main() {
 
 }
 
-// ep16 17:40
+// ep16 18:00
 //https://wiki.libsdl.org/SDL_GetMouseState
 
 //https://wiki.libsdl.org/SDL_TouchFingerEvent

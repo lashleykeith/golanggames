@@ -1,7 +1,7 @@
 package apt
 
 import (
-	"github.com/lashleykeith/golanggames/noise"
+	"github.com/lashleykeith/golanggames/app/noise"
 	//"github.com/jackmott/noise"
 	"math"
 	"strconv"

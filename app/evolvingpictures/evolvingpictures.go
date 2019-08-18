@@ -1,10 +1,10 @@
 // http://gameswithgo.org/balloons/balloons.zip
 
-// ep15 103:00
 package main
 
 // Experiment! draw some crazy stuff!
 // Gist it next week and I'll show it off on stream
+// ep16 58:20
 
 import (
 	"fmt"
@@ -142,20 +142,67 @@ func main() {
 	currentMouseState := getMouseState()
 	// prevMouseState := currentMouseState
 
+	aptR := GetRandomNode()
+	aptG := GetRandomNode()
+	aptB := GetRandomNode()
+
+	num := rand.Intn(20)
+	for i := 0; i < num; i++ {
+		aptR.AddRandom(GetRandomNode())
+	}
+
+	num := rand.Intn(20)
+	for i := 0; i < num; i++ {
+		aptG.AddRandom(GetRandomNode())
+	}
+
+	num := rand.Intn(20)
+	for i := 0; i < num; i++ {
+		aptB.AddRandom(GetRandomNode())
+	}
+
+	for {
+		_, nilCount := aptR.NodeCounts()
+		if nilCount == 0 {
+			break
+		}
+		aptR.AddRandom(GetRandomLeaf())
+	}
+
+
+
+	for {
+		_, nilCount := aptG.NodeCounts()
+		if nilCount == 0 {
+			break
+		}
+		aptG.AddRandom(GetRandomLeaf())
+	}
+
+	for {
+		_, nilCount := aptB.NodeCounts()
+		if nilCount == 0 {
+			break
+		}
+		aptB.AddRandom(GetRandomLeaf())
+	}
+	
+	tex := aptToTexture(aptR, aptG, aptB, 640, 480, renderer)
+
 	x := &OpX{}
 	y := &OpY{}
 	sine := &OpSin{}
 	noise := &OpNoise{}
-	atan2 := &OpAtan2{}
+	atan2 := &OpMult{}
 	plus := &OpPlus{}
 	atan2.LeftChild = x
 	atan2.RightChild = noise
-
+	noise.LeftChild = x
+	noise.RightChild = y
 	sine.Child = atan2
-	plus.LeftChild = x
+	plus.LeftChild = y
 	plus.RightChild = sine
 
-	tex := aptToTexture(plus, plus, plus, 640, 480, renderer)
 
 
 	for {
@@ -194,7 +241,6 @@ func main() {
 
 }
 
-// ep16 18:00
 //https://wiki.libsdl.org/SDL_GetMouseState
 
 //https://wiki.libsdl.org/SDL_TouchFingerEvent

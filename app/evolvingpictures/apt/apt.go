@@ -5,8 +5,11 @@ import (
 	//"github.com/jackmott/noise"
 	"math"
 	"strconv"
+	"fmt"
+	"math/rand"
 	//. "github.com/jackmott/gameswithgo-public/evolvingpictures/apt"
 )
+
 
 // + / * - Sin Cos Atan SimplexNoise X Y Constants...
 // Leaf Node (0 children)

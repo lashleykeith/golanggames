@@ -4,7 +4,7 @@ package apt
 
 import (
 	"fmt"
-	"github.com/jackmott/gameswithgo-public/noise"
+	"github.com/lashleykeith/golanggames/app/noise"
 	"math"
 	"math/rand"
 	"strconv"

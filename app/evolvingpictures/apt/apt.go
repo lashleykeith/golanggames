@@ -1,13 +1,11 @@
-//TODO backtracking on addrandom
-
 package apt
 
 import (
-	"fmt"
 	"github.com/lashleykeith/golanggames/app/noise"
+	//"github.com/jackmott/noise"
 	"math"
-	"math/rand"
 	"strconv"
+	//. "github.com/jackmott/gameswithgo-public/evolvingpictures/apt"
 )
 
 // + / * - Sin Cos Atan SimplexNoise X Y Constants...
@@ -15,7 +13,7 @@ import (
 // Single Node (sin/cos)
 // DoubleNode (+, -)
 
-///  apt.go
+
 type Node interface {
 	Eval(x, y float32) float32
 	String() string

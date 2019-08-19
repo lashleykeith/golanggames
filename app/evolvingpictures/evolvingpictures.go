@@ -1,17 +1,17 @@
-// http://gameswithgo.org/balloons/balloons.zip
+// Homework
+// 1. Add some new operations
+// 2. Add an operation that takes 3 arguments such as LERP (linear interpolation)
+// 3. Add time along with X and Y as inputs to Eval, and make random videos (maybe do this in a separate folder as we won't use it on stream)
 
 package main
 
-// Experiment! draw some crazy stuff!
-// Gist it next week and I'll show it off on stream
-// ep16 58:20
-
 import (
 	"fmt"
+	. "github.com/jackmott/gameswithgo-public/evolvingpictures/apt"
+	"github.com/veandco/go-sdl2/sdl"
+	"math/rand"
 	"time"
-	. "github.com/lashleykeith/golanggames/app/evolvingpictures/apt"
-	//. "github.com/jackmott/evolvingpictures/apt"
-	"github.com/veandco/go-sdl2/sdl")
+)
 
 const winWidth, winHeight, winDepth int = 1280, 720, 100
 
@@ -38,8 +38,6 @@ func getMouseState() mouseState {
 	result.rightButton = !(rightButton == 0)
 	return result
 }
-
-
 
 type rgba struct {
 	r, g, b byte
@@ -85,7 +83,6 @@ func aptToTexture(redNode, greenNode, blueNode Node, w, h int, renderer *sdl.Ren
 			g := greenNode.Eval(x, y)
 			b := blueNode.Eval(x, y)
 
-
 			pixels[pixelIndex] = byte(r*scale - offset)
 			pixelIndex++
 			pixels[pixelIndex] = byte(g*scale - offset)
@@ -123,24 +120,24 @@ func main() {
 	}
 	defer renderer.Destroy()
 
-	// Note, run "go get -u github.com/veandco/go-sdl2/sdl" to get the latest sdl2 bindings
-	// which fixes an unecessary parameter in the LoadWAV call
-	/*explosionBytes, audioSpec := sdl.LoadWAV("explode.wav")
-	audioID, err := sdl.OpenAudioDevice("", false, audioSpec, nil, 0)
+	/*var audioSpec sdl.AudioSpec
+	explosionBytes, _ := sdl.LoadWAV("explode.wav", &audioSpec)
+	audioID, err := sdl.OpenAudioDevice("", false, &audioSpec, nil, 0)
 	if err != nil {
 		panic(err)
 	}
 	defer sdl.FreeWAV(explosionBytes)
 
-	audioState := audioState{explosionBytes, audioID, audioSpec}
+	audioState := audioState{explosionBytes, audioID, &audioSpec}
 	*/
-	
+
 	sdl.SetHint(sdl.HINT_RENDER_SCALE_QUALITY, "1")
 
-	
 	var elapsedTime float32
 	currentMouseState := getMouseState()
-	// prevMouseState := currentMouseState
+	//prevMouseState := currentMouseState
+
+	rand.Seed(time.Now().UTC().UnixNano())
 
 	aptR := GetRandomNode()
 	aptG := GetRandomNode()
@@ -150,13 +147,12 @@ func main() {
 	for i := 0; i < num; i++ {
 		aptR.AddRandom(GetRandomNode())
 	}
-
-	num := rand.Intn(20)
+	num = rand.Intn(20)
 	for i := 0; i < num; i++ {
 		aptG.AddRandom(GetRandomNode())
 	}
 
-	num := rand.Intn(20)
+	num = rand.Intn(20)
 	for i := 0; i < num; i++ {
 		aptB.AddRandom(GetRandomNode())
 	}
@@ -168,8 +164,6 @@ func main() {
 		}
 		aptR.AddRandom(GetRandomLeaf())
 	}
-
-
 
 	for {
 		_, nilCount := aptG.NodeCounts()
@@ -186,24 +180,12 @@ func main() {
 		}
 		aptB.AddRandom(GetRandomLeaf())
 	}
-	
-	tex := aptToTexture(aptR, aptG, aptB, 640, 480, renderer)
 
-	x := &OpX{}
-	y := &OpY{}
-	sine := &OpSin{}
-	noise := &OpNoise{}
-	atan2 := &OpMult{}
-	plus := &OpPlus{}
-	atan2.LeftChild = x
-	atan2.RightChild = noise
-	noise.LeftChild = x
-	noise.RightChild = y
-	sine.Child = atan2
-	plus.LeftChild = y
-	plus.RightChild = sine
+	fmt.Println("R:", aptR)
+	fmt.Println("G:", aptG)
+	fmt.Println("B:", aptB)
 
-
+	tex := aptToTexture(aptR, aptG, aptB, 1280, 720, renderer)
 
 	for {
 		frameStart := time.Now()
@@ -227,7 +209,6 @@ func main() {
 
 		renderer.Copy(tex, nil, nil)
 
-		
 		renderer.Present()
 		elapsedTime = float32(time.Since(frameStart).Seconds() * 1000)
 		//	fmt.Println("ms per frame:", elapsedTime)
@@ -236,272 +217,7 @@ func main() {
 			elapsedTime = float32(time.Since(frameStart).Seconds() * 1000)
 		}
 
-		// prevMouseState = currentMouseState
+		//prevMouseState = currentMouseState
 	}
 
 }
-
-//https://wiki.libsdl.org/SDL_GetMouseState
-
-//https://wiki.libsdl.org/SDL_TouchFingerEvent
-
-
-/// 63
-/*
-type Node interface {
-	Eval(x, y float32) float32
-}
-
-type LeafNode struct{}
-
-type SingleNode struct {
-	Child Node
-}
-
-type DoubleNode struct {
-	LeftChild  Node
-	RightChild Node
-}
-
-type OpPlus struct {
-	DoubleNode
-}
-
-func (op *OpPlus) Eval(x, y float32) float32 {
-	fmt.Println(x, y)
-	fmt.Println(op.LeftChild.Eval(x, y))
-	fmt.Println(op.RightChild.Eval(x, y))
-	return op.LeftChild.Eval(x, y) + op.RightChild.Eval(x, y)
-}
-
-type OpX LeafNode
-
-func (op *OpX) Eval(x, y float32) float32 {
-	return x
-}
-
-type OpY LeafNode
-
-func (op *OpY) Eval(x, y float32) float32 {
-	return y
-}
-*/
-
-// 64evolvingpicturesmath
-/*
-package apt
-
-import (
-	"math"
-	//. "github.com/jackmott/gameswithgo-public/evolvingpictures/apt"
-)
-
-// + / * - Sin Cos Atan SimplexNoise X Y Constants...
-// Leaf Node (0 children)
-// Single Node (sin/cos)
-// DoubleNode (+, -)
-
-type Node interface {
-	Eval(x, y float32) float32
-}
-
-type LeafNode struct{}
-
-type SingleNode struct {
-	Child Node
-}
-
-type DoubleNode struct {
-	LeftChild  Node
-	RightChild Node
-}
-
-type OpSin struct {
-	SingleNode
-}
-
-type OpPlus struct {
-	DoubleNode
-}
-
-func (op *OpSin) Eval(x, y float32) float32 {
-	return float32(math.Sin(float64(op.Child.Eval(x, y))))
-}
-
-func (op *OpPlus) Eval(x, y float32) float32 {
-	return op.LeftChild.Eval(x, y) + op.RightChild.Eval(x, y)
-}
-
-type OpX LeafNode
-
-func (op *OpX) Eval(x, y float32) float32 {
-	return x
-}
-
-type OpY LeafNode
-
-func (op *OpY) Eval(x, y float32) float32 {
-	return y
-}
-*/
-
-// 65
-
-/*
-package apt
-
-import (
-	"math"
-	//. "github.com/jackmott/gameswithgo-public/evolvingpictures/apt"
-)
-
-// + / * - Sin Cos Atan SimplexNoise X Y Constants...
-// Leaf Node (0 children)
-// Single Node (sin/cos)
-// DoubleNode (+, -)
-
-type Node interface {
-	Eval(x, y float32) float32
-	String() string
-}
-
-type LeafNode struct{}
-
-type SingleNode struct {
-	Child Node
-}
-
-type DoubleNode struct {
-	LeftChild  Node
-	RightChild Node
-}
-
-type OpSin struct {
-	SingleNode
-}
-
-func (op *OpSin) Eval(x, y float32) float32 {
-	return float32(math.Sin(float64(op.Child.Eval(x, y))))
-}
-
-func (op *OpSin) String() string {
-	return "Sin(" + op.Child.String() + ")"
-}
-
-type OpPlus struct {
-	DoubleNode
-}
-
-func (op *OpPlus) Eval(x, y float32) float32 {
-	return op.LeftChild.Eval(x, y) + op.RightChild.Eval(x, y)
-}
-
-func (op *OpPlus) String() string {
-	return op.LeftChild.String() + " + " + op.RightChild.String()
-}
-
-type OpX LeafNode
-
-func (op *OpX) Eval(x, y float32) float32 {
-	return x
-}
-
-func (op *OpX) String() string {
-	return "X"
-}
-
-type OpY LeafNode
-
-func (op *OpY) Eval(x, y float32) float32 {
-	return y
-}
-
-func (op *OpY) String() string {
-	return "Y"
-}
-
-// EP 43:39
-// https://github.com/veandco/go-sdl2/
-
-
-*/
-
-// 66
-/*
-
-package apt
-
-import (
-	"math"
-	//. "github.com/jackmott/gameswithgo-public/evolvingpictures/apt"
-)
-
-// + / * - Sin Cos Atan SimplexNoise X Y Constants...
-// Leaf Node (0 children)
-// Single Node (sin/cos)
-// DoubleNode (+, -)
-
-type Node interface {
-	Eval(x, y float32) float32
-	String() string
-}
-
-type LeafNode struct{}
-
-type SingleNode struct {
-	Child Node
-}
-
-type DoubleNode struct {
-	LeftChild  Node
-	RightChild Node
-}
-
-type OpSin struct {
-	SingleNode
-}
-
-func (op *OpSin) Eval(x, y float32) float32 {
-	return float32(math.Sin(float64(op.Child.Eval(x, y))))
-}
-
-func (op *OpSin) String() string {
-	return "( Sin " + op.Child.String() + ")"
-}
-
-type OpPlus struct {
-	DoubleNode
-}
-
-func (op *OpPlus) Eval(x, y float32) float32 {
-	return op.LeftChild.Eval(x, y) + op.RightChild.Eval(x, y)
-}
-
-func (op *OpPlus) String() string {
-	return "( + " + op.LeftChild.String() + " " + op.RightChild.String() + ")"
-}
-
-type OpX LeafNode
-
-func (op *OpX) Eval(x, y float32) float32 {
-	return x
-}
-
-func (op *OpX) String() string {
-	return "X"
-}
-
-type OpY LeafNode
-
-func (op *OpY) Eval(x, y float32) float32 {
-	return y
-}
-
-func (op *OpY) String() string {
-	return "Y"
-}
-
-// EP 43:39
-// https://github.com/veandco/go-sdl2/
-
-*/

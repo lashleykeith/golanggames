@@ -1,12 +1,13 @@
-//backtracting on random
+//TODO backtracking on addrandom
+
 package apt
 
 import (
-	"github.com/lashleykeith/golanggames/app/noise"
-	//"github.com/jackmott/noise"
+	"fmt"
+	"github.com/jackmott/gameswithgo-public/noise"
 	"math"
+	"math/rand"
 	"strconv"
-	//. "github.com/jackmott/gameswithgo-public/evolvingpictures/apt"
 )
 
 // + / * - Sin Cos Atan SimplexNoise X Y Constants...
@@ -23,12 +24,12 @@ type Node interface {
 
 type LeafNode struct{}
 
-func (leaf *LeafNode) AddRandom(node Node){
-	// panic("ERROR: You tried to add a node to leaft node")
+func (leaf *LeafNode) AddRandom(node Node) {
+	//panic("ERROR: You tried to add a node to a leaf node")
 	fmt.Println("tried to add a leaf node")
 }
 
-type (leaf *LeafNode) NodeCounts() (nodeCount, nilCount int){
+func (leaf *LeafNode) NodeCounts() (nodeCount, nilCount int) {
 	return 1, 0
 }
 
@@ -36,17 +37,17 @@ type SingleNode struct {
 	Child Node
 }
 
-func (single *SingleNode) AddRandom(node Node){
+func (single *SingleNode) AddRandom(node Node) {
 	if single.Child == nil {
-		single.Child == node
+		single.Child = node
 	} else {
 		single.Child.AddRandom(node)
 	}
 }
 
-func (single *SingleNode) NodeCounts() (nodeCount, nilCount int){
-	if single.Child == nil{
-		return 1,1
+func (single *SingleNode) NodeCounts() (nodeCount, nilCount int) {
+	if single.Child == nil {
+		return 1, 1
 	} else {
 		childNodeCount, childNilCount := single.Child.NodeCounts()
 		return 1 + childNodeCount, childNilCount
@@ -58,7 +59,7 @@ type DoubleNode struct {
 	RightChild Node
 }
 
-func (double *DoubleNode) NodeCounts() (nodeCount, nilCount int){
+func (double *DoubleNode) NodeCounts() (nodeCount, nilCount int) {
 	var leftCount, leftNilCount, rightCount, rightNilCount int
 	if double.LeftChild == nil {
 		leftNilCount = 1
@@ -66,6 +67,7 @@ func (double *DoubleNode) NodeCounts() (nodeCount, nilCount int){
 	} else {
 		leftCount, leftNilCount = double.LeftChild.NodeCounts()
 	}
+
 	if double.RightChild == nil {
 		rightNilCount = 1
 		rightCount = 0
@@ -76,11 +78,11 @@ func (double *DoubleNode) NodeCounts() (nodeCount, nilCount int){
 	return 1 + leftCount + rightCount, leftNilCount + rightNilCount
 }
 
-func (double *DoubleNode) AddRandom(node Node){
+func (double *DoubleNode) AddRandom(node Node) {
 	r := rand.Intn(2)
 	if r == 0 {
 		if double.LeftChild == nil {
-		   double.LeftChild = node
+			double.LeftChild = node
 		} else {
 			double.LeftChild.AddRandom(node)
 		}
@@ -93,7 +95,6 @@ func (double *DoubleNode) AddRandom(node Node){
 	}
 }
 
-
 type OpSin struct {
 	SingleNode
 }
@@ -103,7 +104,7 @@ func (op *OpSin) Eval(x, y float32) float32 {
 }
 
 func (op *OpSin) String() string {
-	return "( Sin " + op.Child.String() + ")"
+	return "( Sin " + op.Child.String() + " )"
 }
 
 type OpCos struct {
@@ -115,7 +116,7 @@ func (op *OpCos) Eval(x, y float32) float32 {
 }
 
 func (op *OpCos) String() string {
-	return "( Cos " + op.Child.String() + ")"
+	return "( Cos " + op.Child.String() + " )"
 }
 
 type OpAtan struct {
@@ -127,19 +128,19 @@ func (op *OpAtan) Eval(x, y float32) float32 {
 }
 
 func (op *OpAtan) String() string {
-	return "( Atan " + op.Child.String() + ")"
+	return "( Atan " + op.Child.String() + " )"
 }
 
 type OpNoise struct {
 	DoubleNode
 }
 
-func (op *OpNoise) Eval(x,y float32) float32{
-	return 80*noise.Snoise2(op.LeftChild.Eval(x,y), op.RightChild.Eval(x,y)) - 2.0
+func (op *OpNoise) Eval(x, y float32) float32 {
+	return 80*noise.Snoise2(op.LeftChild.Eval(x, y), op.RightChild.Eval(x, y)) - 2.0
 }
 
-func (op *OpNoise) String() string{
-	return "( SimplexNoise " + op.LeftChild.String() +" " + op.RightChild.String() + " ) "
+func (op *OpNoise) String() string {
+	return "( SimplexNoise " + op.LeftChild.String() + " " + op.RightChild.String() + " )"
 }
 
 type OpPlus struct {
@@ -202,11 +203,10 @@ func (op *OpAtan2) String() string {
 	return "( Atan2 " + op.LeftChild.String() + " " + op.RightChild.String() + " )"
 }
 
-
-
 type OpX struct {
 	LeafNode
 }
+
 func (op *OpX) Eval(x, y float32) float32 {
 	return x
 }
@@ -218,6 +218,7 @@ func (op *OpX) String() string {
 type OpY struct {
 	LeafNode
 }
+
 func (op *OpY) Eval(x, y float32) float32 {
 	return y
 }
@@ -239,41 +240,40 @@ func (op *OpConstant) String() string {
 	return strconv.FormatFloat(float64(op.value), 'f', 9, 32)
 }
 
-
-func GetRandomNode() Node{
+func GetRandomNode() Node {
 	r := rand.Intn(9)
 	switch r {
 	case 0:
 		return &OpPlus{}
 	case 1:
-		return &OpMins{}
-	case 2: 
+		return &OpMinus{}
+	case 2:
 		return &OpMult{}
 	case 3:
 		return &OpDiv{}
 	case 4:
 		return &OpAtan2{}
+	case 5:
+		return &OpAtan{}
 	case 6:
 		return &OpCos{}
 	case 7:
 		return &OpSin{}
 	case 8:
 		return &OpNoise{}
-
 	}
 	panic("Get Random Noise Failed")
 }
-func GetRandomLeaf() Node{
+
+func GetRandomLeaf() Node {
 	r := rand.Intn(3)
 	switch r {
 	case 0:
-		return &Opx{}
+		return &OpX{}
 	case 1:
 		return &OpY{}
 	case 2:
-		return &OpConstant{LeafNode{}, rand.float32()*2 - 1}
+		return &OpConstant{LeafNode{}, rand.Float32()*2 - 1}
 	}
 	panic("Error in get random Leaf")
 }
-// ep16 35:21
-// https://github.com/veandco/go-sdl2/

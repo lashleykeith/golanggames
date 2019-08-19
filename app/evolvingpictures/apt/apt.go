@@ -15,6 +15,7 @@ import (
 // Single Node (sin/cos)
 // DoubleNode (+, -)
 
+///  apt.go
 type Node interface {
 	Eval(x, y float32) float32
 	String() string
